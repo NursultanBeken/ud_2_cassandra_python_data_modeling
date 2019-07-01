@@ -9,7 +9,10 @@ import json
 import csv
 from cassandra.cluster import Cluster
 
-
+"""
+    This procedure connects to a locally installed Apache Cassandra instance.
+    It creates a Keyspace and sets keyspace for our session.
+"""
 def create_and_set_keyspace():
     try:
         cluster = Cluster(['127.0.0.1']) #If you have a locally installed Apache Cassandra instance
@@ -29,8 +32,45 @@ def create_and_set_keyspace():
     except Exception as e:
         print(e)
 
-def main():
-   create_and_set_keyspace() 
+def create_tables():
+    create_query_1 = "CREATE TABLE IF NOT EXISTS music_library "
+    create_query_1 = create_query_1 + "(sessionId int, itemInSession int, artist text, song text, length double ,PRIMARY KEY (sessionId, itemInSession ))"
+    
+    create_query_2 = "CREATE TABLE IF NOT EXISTS user_library"
+    create_query_2 = create_query_2 + "(userid int, sessionid int, itemInSession int, firstname text, lastname text, artist text, song text, PRIMARY KEY (userid, sessionid, itemInSession ))"
+    
+    create_query_3 = "CREATE TABLE IF NOT EXISTS music_library"
+    create_query_3 = create_query_3 + "(song text, userid int, firstname text, lastname text, PRIMARY KEY (song, userid ))"
 
+    try:
+        session.execute(create_query_1)
+        session.execute(create_query_2)
+        session.execute(create_query_3)
+    except Exception as e:
+        print(e) 
+      
+def insert_table(file_name):
+
+    insert_query_1 = "INSERT INTO song_library (sessionId, itemInSession, artist, song,length )"
+    insert_query_1 = insert_query_1 + "VALUES (%s, %s, %s, %s , %s)"
+
+    insert_query_2 = "INSERT INTO user_library (userid,sessionid,itemInSession,firstname,lastname,artist,song)"
+    insert_query_2 = insert_query_2 + "VALUES (%s, %s, %s, %s , %s, %s, %s)"
+    
+    insert_query_3 = "INSERT INTO music_library (song, userid, firstname,lastname  )"
+    insert_query_3 = insert_query_3 + "VALUES (%s, %s, %s, %s )"
+
+    with open(file, encoding = 'utf8') as f:
+        csvreader = csv.reader(f)
+        next(csvreader) # skip header
+        for line in csvreader:
+            session.execute(insert_query_1, (int(line[8]), int(line[3]), line[0], line[9], float(line[5]) ))
+            session.execute(insert_query_2, (int(line[10]), line[1], line[4], int(line[8]), line[0], line[9], int(line[3]) )) 
+            session.execute(insert_query_3, (line[9], int(line[10]), line[1], line[4]  ))  
+
+
+def main():
+    create_and_set_keyspace() 
+    create_tables()
 if __name__ == "__main__":
     main()
