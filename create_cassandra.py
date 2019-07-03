@@ -65,12 +65,38 @@ def insert_table(file_name):
         next(csvreader) # skip header
         for line in csvreader:
             session.execute(insert_query_1, (int(line[8]), int(line[3]), line[0], line[9], float(line[5]) ))
-            session.execute(insert_query_2, (int(line[10]), line[1], line[4], int(line[8]), line[0], line[9], int(line[3]) )) 
-            session.execute(insert_query_3, (line[9], int(line[10]), line[1], line[4]  ))  
+            session.execute(insert_query_2, (int(line[10]),int(line[8]), int(line[3]), line[1], line[4], line[0], line[9]  ))  
+            session.execute(insert_query_3, (line[9] ,int(line[10]), line[1], line[4],))  
 
+def select():
+
+    query_1 = "select artist, song, length from song_library WHERE sessionid = 338 and iteminsession=4"
+    try:
+        rows = session.execute(query_1)
+    except Exception as e:
+        print(e)
+    for row in rows:
+        print (row.artist, row.song, row.length)  
+
+    query_2 = "select artist, song, firstname, lastname from user_library WHERE userid = 10 and sessionid = 182"
+    try:
+        rows = session.execute(query_2)
+    except Exception as e:
+        print(e)
+    for row in rows:
+        print (row.artist, row.song, row.firstname, row.lastname)  
+
+    query_3 = "select firstname, lastname from music_library WHERE song ='All Hands Against His Own' "
+    try:
+        rows = session.execute(query_3)
+    except Exception as e:
+        print(e)
+    for row in rows:
+        print (row.firstname, row.lastname, row.song)   
 
 def main():
     create_and_set_keyspace() 
     create_tables()
+    insert_table()
 if __name__ == "__main__":
     main()
