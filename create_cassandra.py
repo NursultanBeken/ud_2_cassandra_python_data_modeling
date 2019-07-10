@@ -51,7 +51,7 @@ def create_tables():
       
 def insert_table(file_name):
 
-    insert_query_1 = "INSERT INTO song_library (sessionId, itemInSession, artist, song,length )"
+    insert_query_1 = "INSERT INTO song_library (sessionid, iteminsession, artist, song,length )"
     insert_query_1 = insert_query_1 + "VALUES (%s, %s, %s, %s , %s)"
 
     insert_query_2 = "INSERT INTO user_library (userid,sessionid,itemInSession,firstname,lastname,artist,song)"
@@ -65,7 +65,7 @@ def insert_table(file_name):
         next(csvreader) # skip header
         for line in csvreader:
             session.execute(insert_query_1, (int(line[8]), int(line[3]), line[0], line[9], float(line[5]) ))
-            session.execute(insert_query_2, (int(line[10]),int(line[8]), int(line[3]), line[1], line[4], line[0], line[9]  ))  
+            session.execute(insert_query_2, (int(line[10]),int(line[8]), int(line[3]), line[1], line[4], line[0], line[9]))  
             session.execute(insert_query_3, (line[9] ,int(line[10]), line[1], line[4],))  
 
 def select():
